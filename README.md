@@ -1,4 +1,4 @@
-# next-js-blog-build
+# next-js-blog
 
 The build step shared by my Next.js blogs, whose articles are markdown files in a separate content repo.
 
@@ -29,11 +29,11 @@ Add it to the site at a tag, and run it from `scripts/build-blog.ts` (with `tsx`
 `prebuild`, `pretest` and `pretypecheck` scripts):
 
 ```
-yarn add github:LukeNeedham/next-js-blog-build#v1.0.0
+yarn add github:LukeNeedham/next-js-blog#v1.0.0
 ```
 
 ```ts
-import { buildBlog, chakraToCss } from 'next-js-blog-build'
+import { buildBlog, chakraToCss } from 'next-js-blog'
 import { system } from '@/presentation/theme/system'
 import { articleStyles } from './blog/articleStyles'
 
