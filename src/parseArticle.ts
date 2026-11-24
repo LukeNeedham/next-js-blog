@@ -6,6 +6,8 @@ export interface ParsedArticle {
   meta: Record<string, string>
   /** The markdown after the front matter */
   body: string
+  /** `draft: true` in the front matter: the article is saved in the repo but must not be published */
+  draft: boolean
 }
 
 const frontMatter = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/
@@ -34,6 +36,12 @@ export function parseArticle(id: string, source: string, fields: Fields): Parsed
   }
   const values = (typeof data === 'object' && data !== null ? data : {}) as Record<string, unknown>
 
+  // A draft is work in progress, so its fields are not checked: only a finished article has to be complete
+  const body = source.slice(match[0].length)
+  if (values.draft === true || String(values.draft).trim().toLowerCase() === 'true') {
+    return { meta: {}, body, draft: true }
+  }
+
   const meta: Record<string, string> = {}
   for (const [name, type] of Object.entries(fields)) {
     const raw = values[name]
@@ -46,5 +54,5 @@ export function parseArticle(id: string, source: string, fields: Fields): Parsed
     }
     meta[name] = type === 'image' ? imagePath(value) : value
   }
-  return { meta, body: source.slice(match[0].length) }
+  return { meta, body, draft: false }
 }
