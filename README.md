@@ -25,6 +25,12 @@ images/     the images the articles use
 An article opens with YAML front matter. In the markdown, an image is `![Alt](../images/name.png)`, which also shows
 on GitHub, and is served as `/blog-images/name.png`.
 
+## Releasing
+
+Bump `version` in `package.json` and merge: the `Tag release` workflow tags `main` as `v<version>` with the repo's own
+token (so it needs Settings, Actions, Workflow permissions to allow writes). It does nothing if the tag exists. A site
+then depends on `github:LukeNeedham/next-js-blog#v<version>`.
+
 ## Using it
 
 Add it to the site at a tag, and run it from `scripts/build-blog.ts` (with `tsx`, as the `generate`, `predev`,
