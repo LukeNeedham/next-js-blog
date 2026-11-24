@@ -1,0 +1,30 @@
+name: Tag release
+
+# Tags main as v<version> from package.json, so a release is: bump the version, merge. Sites depend on the tag
+# (github:LukeNeedham/next-js-blog#v1.1.0). It uses the repo's own token, so no person or tool has to push a tag.
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - package.json
+      - .github/workflows/tag.yml
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the tag if the version has none yet
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          if git ls-remote --exit-code --tags origin "refs/tags/$version" >/dev/null; then
+            echo "$version already exists: nothing to do."
+            exit 0
+          fi
+          git tag "$version"
+          git push origin "$version"
+          echo "Created $version at $(git rev-parse --short HEAD)."
