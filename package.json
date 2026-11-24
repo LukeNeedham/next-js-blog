@@ -1,6 +1,6 @@
 {
   "name": "next-js-blog",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The build step of a Next.js blog whose articles are markdown in a content repo: download, validate, render to HTML.",
   "private": true,
   "license": "UNLICENSED",

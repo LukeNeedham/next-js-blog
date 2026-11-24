@@ -25,7 +25,7 @@ async function exists(file: string): Promise<boolean> {
 }
 
 /**
- * BUILD TIME ONLY. Downloads the blog content (see `fetchContent`), checks and renders each markdown article to HTML,
+ * BUILD TIME ONLY. An article with `draft: true` in its front matter is left out of everything. Downloads the blog content (see `fetchContent`), checks and renders each markdown article to HTML,
  * lists the articles from their front matter, copies the images to `public/blog-images` and writes the article CSS.
  * The articles, their HTML and the CSS are written to `src/generated`, which is all that the app has to import.
  */
@@ -50,13 +50,18 @@ export async function buildBlog(options: BuildBlogOptions): Promise<void> {
   const files = (await fs.readdir(articlesDir)).filter((it) => it.endsWith('.md')).sort()
   const html: Record<string, string> = {}
   const articles: Record<string, string>[] = []
+  let drafts = 0
   for (const file of files) {
     const id = path.basename(file, '.md')
-    const { meta, body } = parseArticle(
+    const { meta, body, draft } = parseArticle(
       id,
       await fs.readFile(path.join(articlesDir, file), 'utf-8'),
       options.fields,
     )
+    if (draft) {
+      drafts++
+      continue
+    }
     for (const [name, type] of Object.entries(options.fields)) {
       if (type === 'image') {
         if (!(await exists(path.join(imagesDir, meta[name])))) {
@@ -77,6 +82,6 @@ export async function buildBlog(options: BuildBlogOptions): Promise<void> {
   await fs.writeFile(path.join(outDir, 'blog-article.css'), banner + options.articleCss)
 
   console.log(
-    `Generated ${files.length} blog articles and article CSS in ${path.relative(root, outDir)}`,
+    `Generated ${articles.length} blog articles (${drafts} drafts left out) and article CSS in ${path.relative(root, outDir)}`,
   )
 }

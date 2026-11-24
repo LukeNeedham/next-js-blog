@@ -85,3 +85,17 @@ test('a download that fails fails the build, with the address', async () => {
   )
   vi.unstubAllGlobals()
 })
+
+test('a draft is left out of the list and the HTML', async () => {
+  await write(path.join(content, 'articles', 'one.md'), '---\ntitle: One\ndate: 2026-01-01\n---\nx')
+  await write(
+    path.join(content, 'articles', 'wip.md'),
+    '---\ntitle: Wip\ndate: 2026-01-02\ndraft: true\n---\ny',
+  )
+  await buildBlog({ ...options(), fields: { title: 'text', date: 'date' } })
+  const generated = path.join(dir, 'site', 'src', 'generated')
+  const list = JSON.parse(await fs.readFile(path.join(generated, 'blog-articles.json'), 'utf-8'))
+  expect(list.map((it: { id: string }) => it.id)).toEqual(['one'])
+  const html = JSON.parse(await fs.readFile(path.join(generated, 'blog-html.json'), 'utf-8'))
+  expect(Object.keys(html)).toEqual(['one'])
+})

@@ -11,6 +11,8 @@ At build time it:
 5. writes `src/generated/blog-articles.json` (the list), `blog-html.json` (the HTML by article id) and
    `blog-article.css`, which is all the app has to import.
 
+An article with `draft: true` in its front matter is left out of everything (and its fields are not checked).
+
 A failure at any step fails the build with a message that names the article and the field.
 
 ## The content repo
@@ -29,7 +31,7 @@ Add it to the site at a tag, and run it from `scripts/build-blog.ts` (with `tsx`
 `prebuild`, `pretest` and `pretypecheck` scripts):
 
 ```
-yarn add github:LukeNeedham/next-js-blog#v1.0.0
+yarn add github:LukeNeedham/next-js-blog#v1.1.0
 ```
 
 ```ts

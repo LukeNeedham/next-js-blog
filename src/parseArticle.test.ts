@@ -15,6 +15,7 @@ test('reads the front matter and leaves the markdown', () => {
   expect(parseArticle('a', source, fields)).toEqual({
     meta: { title: 'Light: and Material', summary: 'A summary', date: '2026-09-12' },
     body: 'First paragraph.\n',
+    draft: false,
   })
 })
 
@@ -74,4 +75,19 @@ test('an image is the path relative to images, however the editor wrote it', () 
     expect(parseArticle('a', article, imageFields).meta.image).toBe('junie.png')
   }
   expect(imagePath('sub/dir/a.png')).toBe('sub/dir/a.png')
+})
+
+test('an article is not a draft unless its front matter says so', () => {
+  expect(parseArticle('a', source, fields).draft).toBe(false)
+  expect(parseArticle('a', source.replace('date:', 'draft: false\ndate:'), fields).draft).toBe(
+    false,
+  )
+})
+
+test('a draft is read without its fields being checked', () => {
+  expect(parseArticle('a', '---\ntitle: T\ndraft: true\n---\nx', fields)).toEqual({
+    meta: {},
+    body: 'x',
+    draft: true,
+  })
 })
